@@ -1,5 +1,5 @@
 // Bulletproof API with fallback data
-const API_BASE_URL = 'https://music-band-1.onrender.com';
+const API_BASE_URL = 'https://music-band-jekc.onrender.com';
 
 // Mock data as fallback
 const mockShows = [
