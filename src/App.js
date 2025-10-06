@@ -7,6 +7,7 @@ import BandDetail from './components/pages/BandDetail';
 import VenueDetail from './components/pages/VenueDetail';
 import BandsList from './components/pages/BandsList';
 import CreateBand from './components/forms/CreateBand';
+import EditBand from './components/forms/EditBand';
 import BackendStatus from './components/common/BackendStatus';
 import ParticleBackground from './components/common/ParticleBackground';
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="/shows/:id" element={<ShowDetail />} />
             <Route path="/bands" element={<BandsList />} />
             <Route path="/bands/:id" element={<BandDetail />} />
+            <Route path="/bands/:id/edit" element={<EditBand />} />
             <Route path="/venues/:id" element={<VenueDetail />} />
             <Route path="/create-band" element={<CreateBand />} />
           </Routes>

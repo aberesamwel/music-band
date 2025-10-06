@@ -38,10 +38,17 @@ def create_show():
     db.session.commit()
     return jsonify(show.to_dict()), 201
 
-@shows_bp.route('/<int:show_id>', methods=['PATCH'])
+@shows_bp.route('/<int:show_id>', methods=['PATCH', 'PUT'])
 def update_show(show_id):
     show = Show.query.get_or_404(show_id)
     data = request.get_json()
+    
+    # Validation for PUT/PATCH
+    if 'title' in data and (not data['title'] or len(str(data['title']).strip()) < 2):
+        return jsonify({'error': 'Show title must be at least 2 characters'}), 400
+    
+    if 'ticket_price' in data and data['ticket_price'] is not None and data['ticket_price'] < 0:
+        return jsonify({'error': 'Ticket price cannot be negative'}), 400
     
     for key, value in data.items():
         if hasattr(show, key):
@@ -107,10 +114,17 @@ def create_band():
         print(f'Band creation error: {str(e)}')
         return jsonify({'error': 'Failed to create band. Please try again.'}), 500
 
-@bands_bp.route('/<int:band_id>', methods=['PATCH'])
+@bands_bp.route('/<int:band_id>', methods=['PATCH', 'PUT'])
 def update_band(band_id):
     band = Band.query.get_or_404(band_id)
     data = request.get_json()
+    
+    # Validation for PUT/PATCH
+    if 'name' in data and (not data['name'] or len(str(data['name']).strip()) < 2):
+        return jsonify({'error': 'Band name must be at least 2 characters'}), 400
+    
+    if 'formed_year' in data and (not isinstance(data['formed_year'], int) or data['formed_year'] < 1900):
+        return jsonify({'error': 'Formation year must be a valid year after 1900'}), 400
     
     for key, value in data.items():
         if hasattr(band, key):

@@ -2,10 +2,13 @@
 
 from config import db
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime
 
-class ShowBand(db.Model):
+class ShowBand(db.Model, SerializerMixin):
     __tablename__ = 'show_bands'
+    serialize_rules = ('-show.show_bands', '-band.show_bands')
+    
     id = db.Column(db.Integer, primary_key=True)
     show_id = db.Column(db.Integer, db.ForeignKey('shows.id'))
     band_id = db.Column(db.Integer, db.ForeignKey('bands.id'))
@@ -14,16 +17,10 @@ class ShowBand(db.Model):
     show = db.relationship('Show', back_populates='show_bands')
     band = db.relationship('Band', back_populates='show_bands')
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'show_id': self.show_id,
-            'band_id': self.band_id,
-            'set_order': self.set_order
-        }
-
-class Band(db.Model):
+class Band(db.Model, SerializerMixin):
     __tablename__ = 'bands'
+    serialize_rules = ('-show_bands.band', '-musicians.band')
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     genre = db.Column(db.String)
@@ -35,19 +32,10 @@ class Band(db.Model):
     show_bands = db.relationship('ShowBand', back_populates='band', cascade='all, delete-orphan')
     shows = association_proxy('show_bands', 'show')
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'genre': self.genre,
-            'description': self.description,
-            'formed_year': self.formed_year,
-            'musicians': [m.to_dict() for m in self.musicians],
-            'created_at': self.created_at.isoformat() if self.created_at else None
-        }
-
-class Venue(db.Model):
+class Venue(db.Model, SerializerMixin):
     __tablename__ = 'venues'
+    serialize_rules = ('-shows.venue',)
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     city = db.Column(db.String)
@@ -57,17 +45,6 @@ class Venue(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     shows = db.relationship('Show', backref='venue', cascade='all, delete-orphan')
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'city': self.city,
-            'address': self.address,
-            'capacity': self.capacity,
-            'phone': self.phone,
-            'created_at': self.created_at.isoformat() if self.created_at else None
-        }
 
 class Show(db.Model):
     __tablename__ = 'shows'

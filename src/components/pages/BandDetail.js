@@ -188,8 +188,14 @@ const BandDetail = () => {
             </h3>
             <div className="space-y-3">
               <Link 
-                to="/create-band" 
+                to={`/bands/${band.id}/edit`}
                 className="w-full btn-primary text-center block"
+              >
+                ✏️ Edit Band
+              </Link>
+              <Link 
+                to="/create-band" 
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-center block"
               >
                 Add Another Band
               </Link>
